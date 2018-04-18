@@ -73,12 +73,9 @@ public class Web {
 
     }
 
-    public List<result> search(String url,String term){
+    public result[] search(String url,String term,WebDriver driver){
+        System.out.println("seaching for "+term);
 
-            // Create a new instance of the html unit driver
-            // Notice that the remainder of the code relies on the interface,
-            // not the implementation.
-            WebDriver driver = new HtmlUnitDriver();
 
 
             driver.get(url);
@@ -94,25 +91,15 @@ public class Web {
             // Check the title of the page
             System.out.println("Page title is: " + driver.getTitle());
 
-            if(driver.getTitle().contains("\"\" - ")){
+            if(driver.getTitle().contains("\"\" - ")){           /////search is empty :(
                 return null;
             }
 
 
-            String source = driver.getPageSource();
 
-        /*
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(driver.getTitle()+".html");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        out.println(source);
-            out.close();
-        */
+
+
             WebElement resultTable = driver.findElement(By.className("table-torrents"));
-
             List<WebElement> allRows = resultTable.findElements(By.tagName("tr"));
 
             List<result> results= new ArrayList<>();
@@ -135,8 +122,6 @@ public class Web {
                         String video="";
                         Pattern p = Pattern.compile("\\w {3}\\w");
                         Matcher m = p.matcher(qual);
-
-
                         if(m.find()) {
                              sound = qual.split("   ")[0];
                              video = qual.split("   ")[1];
@@ -159,27 +144,182 @@ public class Web {
 
             }
             System.out.println("errcount="+errcount);
-        System.out.println("Got "+results.size()+" results");
-
-
-
+            System.out.println("Got "+results.size()+" results");
             System.out.print(Main.ANSI_BLACK);
+            int count=1;
             for(result res: results){
+                System.out.print(Main.ANSI_WHITE+fixedpos(count)+".");
                 System.out.println(res.toString());
+                count++;
             }
+            result[] resultarray = new result[results.size()+1];
+
+            //check for suggested media
+
+        try {
+            WebElement suglist = driver.findElement(By.className("suglist"));
+            List<WebElement> suglinks = suglist.findElements(By.tagName("li"));
+            int sugnum=0;
+            for(WebElement link: suglinks){
 
 
-            driver.quit();
+                //remove punctuation
+                if(link.getAttribute("title").replaceAll("\\p{P}", "").toLowerCase().equals(term.trim().toLowerCase())){
+
+
+                    WebElement typebox = link.findElement(By.className("zqf-small"));
+                    String type="";
+                    if(typebox.toString().contains("tv")){
+                        type="tv";
+                        System.out.print("FOUND MATCHING TV SERIES");
+                    }
+                    if(typebox.toString().contains("movies")){
+                        type="movies";
+                        System.out.print("FOUND MATCHING MOVIE");
+                    }
+
+
+                    System.out.println(" Go to? (y/n)");
+
+                    Main.SetMatch(true);
+
+                    //bump array and add link to result 0
+                    List<WebElement> links = suglist.findElements(By.tagName("a"));
+                    resultarray[0] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","","");
+
+                }
+                sugnum++;
+            }
+        }catch(Exception e){
+            //e.printStackTrace();
+        }
+
+
+
+
 
 
         System.out.println("Enter a number to dl or press q to return to search");
         Main.context="results";
 
-            return results;
+
+            int i=1;
+            for(result res:results){
+                resultarray[i]=res;
+                i++;
+            }
+            return resultarray;
 
 
 
     }
 
+    public String fixedpos(int  pos){
+
+        if(pos<10){
+            return " "+String.valueOf(pos);
+        }
+        return String.valueOf(pos);
+    }
+
+    public static result[] getmatchpage(String url,WebDriver driver){
+        driver.get(url);
+
+        /////For film
+        try {
+            WebElement table = driver.findElement(By.className("table-torrents"));
+            List<WebElement> allRows = table.findElements(By.tagName("tr"));
+            List<result> results = new ArrayList<>();
+            for (WebElement row : allRows) {
+                //System.out.println(row.getText());
+                if(row.getText().equals("")){continue;}
+                result tmp=TableRowToResult(row);
+                results.add(tmp);
+                try {
+                    System.out.println(tmp.toString());
+                }catch (Exception e){
+                    System.out.println(row.getText().replace("\n",""));
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        ///for TV??
+
+        return new result[2];
+    }
+
+    public static result TableRowToResult(WebElement row){
+        List<WebElement> cells = row.findElements(By.tagName("td"));
+
+        if(cells.size()==5){    //movies
+            String zero = cells.get(0).getText();
+            String name = cells.get(1).getText();
+            String sound="";
+            Pattern p = Pattern.compile("\\w\\n\\w");
+            Matcher m = p.matcher(name);
+            if(m.find()) {
+                sound = name.split("\n")[1];
+                name=name.split("\n")[0];
+
+            }
+            String size = cells.get(2).getText();
+            String age= cells.get(3).getText();
+            String[] seedleech = cells.get(4).getText().split("\n");
+            String seed=seedleech[0];
+            String leech = seedleech[1];
+            return new result("",0, name, sound, "", size, age, seed, leech);
+
+        }
+
+        if(cells.size()==4) {       ///TV
+
+            String zero = cells.get(0).getText();
+            String one = cells.get(1).getText();
+            String two = cells.get(2).getText();
+            String three= cells.get(3).getText();
+            List<WebElement>links= row.findElements(By.tagName("a"));
+            String maglink="";
+            for(WebElement cell: cells){
+                System.out.println(cell.getText().replace("\n",""));
+            }
+
+            for(WebElement link:links){
+                if(link.getAttribute("href").contains("magnet:?")){
+                    maglink=link.getAttribute("href");
+                }
+            }
+            try {
+
+                String name = cells.get(1).getText().split("\n")[0];
+                String qual = cells.get(1).getText().split("\n")[1];
+                String sound="";
+                String video="";
+                Pattern p = Pattern.compile("\\w {3}\\w");
+                Matcher m = p.matcher(qual);
+                if(m.find()) {
+                    sound = qual.split("   ")[0];
+                    video = qual.split("   ")[1];
+                }
+                else{
+                    sound="";
+                    video="";
+                }
+                String size = cells.get(3).getText().replace(" ","");
+                String age = cells.get(4).getText();
+                String seed = cells.get(5).getText().split("\n")[0];
+                String leech = cells.get(5).getText().split("\n")[1];               ///throws error
+
+                return new result(maglink,0, name, sound, video, size, age, seed, leech);
+            }catch (Exception e){
+
+            }
+
+        }
+        System.out.println("row didn't parse");
+        return null;
+    }
 
 }

@@ -6,7 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class result {
-    String mag;
+    String link;
     int pos;
     String name;
     String sound;
@@ -16,13 +16,14 @@ public class result {
     String seed;
     String leech;
     public result(String mag, int pos,String name, String sound,String video,String size,String age,String seed, String leech){
+        if(name.equals(null)){return;}
         this.pos=pos;
         this.name=name;
         this.sound=sound;
         this.video=video;
         this.size=size;
         this.age=age;
-        this.mag=mag;
+        this.link=mag;
         this.seed=seed;
         this.leech=leech;
         ////Remove char from seed and leech
@@ -30,9 +31,9 @@ public class result {
 
     @Override
     public String toString() {
+        if(name.equals(null)){return "";}
         String color="";
-        color+=Main.ANSI_RESET;
-        color+=fixedpos()+". ";
+
         color+=Main.ANSI_PURPLE+fixedLengthString(name,80)+" ";
         color+=Main.ANSI_WHITE+fixedLengthString(size,6)+" ";
 
@@ -45,9 +46,9 @@ public class result {
 
     public void open() throws URISyntaxException, IOException {
         if (Desktop.isDesktopSupported()) {
-            Desktop.getDesktop().browse(new URI(mag));
+            Desktop.getDesktop().browse(new URI(link));
         }
-        System.out.println("opening "+mag);
+        System.out.println("opening "+link);
     }
 
     public String fixedpos(){
@@ -55,6 +56,10 @@ public class result {
             return " "+String.valueOf(pos);
         }
         return String.valueOf(pos);
+    }
+
+    public String Getlink(){
+        return link;
     }
 
 
