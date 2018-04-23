@@ -4,5 +4,6 @@ A terminal interface for a low key torrent site
 
 
 
-*Does ANSI coloring work on windows?
-I dont know you tell me
+Enable ANSI Coloring on windows 7 & 8:
+https://github.com/adoxa/ansicon/releases
+install with ansicon -i
