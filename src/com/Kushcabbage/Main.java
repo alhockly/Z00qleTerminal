@@ -69,7 +69,16 @@ public class Main {
 
 
         while (true) {
-            System.out.print(ANSI_GREEN+"Zooqle: $ ");
+            if(context.equals("search")) {
+                System.out.print(ANSI_GREEN + "Zooqle: $ ");
+            }
+            if(context.equals("results")){
+                System.out.print(ANSI_GREEN + "Results: $ ");
+            }
+            if(context.equals("onmatch")){
+                System.out.print(ANSI_GREEN + "Match: $ ");
+            }
+
 
             String command = input.nextLine();
             commandHandler(command, web);

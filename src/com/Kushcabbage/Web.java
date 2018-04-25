@@ -183,7 +183,7 @@ public class Web {
                     String type="";
                     if(typebox.toString().contains("tv")){
                         type="tv";
-                        System.out.print(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (movie)");
+                        System.out.print(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (movie)"+Main.ANSI_RESET);
                     }
                     if(typebox.toString().contains("movies")){
                         type+="movie";
@@ -262,6 +262,15 @@ public class Web {
         }
         ///for TV??
         if(type.equals("tv")){
+            int numseasons=0;
+            List<WebElement> table = driver.findElements(By.className("panel-heading"));
+            for(WebElement e:table){
+                if(e.getAttribute("class").contains("text-nowrap"))
+                    numseasons++;
+            }
+            System.out.println(numseasons+" seasons");
+
+
 
         }
 
