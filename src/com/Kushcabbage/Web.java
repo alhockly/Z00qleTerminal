@@ -125,20 +125,27 @@ public class Web {
                         String qual = cells.get(1).getText().split("\n")[1];
                         String sound="";
                         String video="";
+                        String seed="";
+                        String leech="";
                         Pattern p = Pattern.compile("\\w {3}\\w");
                         Matcher m = p.matcher(qual);
                         if(m.find()) {
                              sound = qual.split("   ")[0];
                              video = qual.split("   ")[1];
                         }
-                        else{
-                             sound="";
-                             video="";
-                        }
+
                         String size = cells.get(3).getText().replace(" ","");
                         String age = cells.get(4).getText();
-                        String seed = cells.get(5).getText().split("\n")[0];
-                        String leech = cells.get(5).getText().split("\n")[1];               ///throws error
+
+                        try {
+                            seed = cells.get(5).getText().split("\n")[0];
+                            leech = cells.get(5).getText().split("\n")[1];
+                        }
+                        catch(Exception e){
+                            seed="0";
+                            leech =cells.get(5).getText();
+
+                        }
                         results.add(new result(maglink,pos, name, sound, video, size, age, seed, leech));
 
                     }catch (Exception e){
@@ -148,7 +155,7 @@ public class Web {
                 }
 
             }
-            System.out.println("errcount="+errcount);
+            //System.out.println("errcount="+errcount);
             System.out.println("Got "+results.size()+" results");
             System.out.print(Main.ANSI_BLACK);
             int count=1;
