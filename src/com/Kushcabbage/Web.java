@@ -96,6 +96,11 @@ public class Web {
             }
 
 
+            if(driver.getPageSource().contains("no torrents match")){
+                System.out.println("no torrents found");
+                Main.context="search";
+                return null;
+            }
 
 
 
@@ -171,7 +176,7 @@ public class Web {
                     String type="";
                     if(typebox.toString().contains("tv")){
                         type="tv";
-                        System.out.println(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (movie)");
+                        System.out.print(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (movie)");
                     }
                     if(typebox.toString().contains("movies")){
                         type+="movie";

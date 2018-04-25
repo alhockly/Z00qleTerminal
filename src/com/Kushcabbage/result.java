@@ -34,11 +34,13 @@ public class result {
         if(name.equals(null)){return "";}
         String color="";
 
-        color+=Main.ANSI_PURPLE+fixedLengthString(name,80)+" ";
+        color+=Main.ANSI_PURPLE+fixedLengthString(name,60)+" ";
         color+=Main.ANSI_WHITE+fixedLengthString(size,6)+" ";
 
         color+=Main.ANSI_CYAN+rightalign(seed,3);
         color+=Main.ANSI_RED+rightalign(leech,3);
+
+        color+=Main.ANSI_WHITE+" "+age;
 
 
         return color;

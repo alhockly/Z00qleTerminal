@@ -122,7 +122,7 @@ public class Main {
 
         if(context.equals("search")){
             results =  web.search(baseurl,command,driver);
-            context="results";
+
 
         }
 
