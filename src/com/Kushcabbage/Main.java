@@ -1,4 +1,4 @@
-package com.example;
+package com.Kushcabbage;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -92,6 +92,25 @@ public class Main {
 
     private static void commandHandler(String command,Web web) {
 
+
+
+        if(context.equals("onmatch")){
+            try {
+                int num = Integer.parseInt(command);
+
+                results[num].open();
+                context = "search";
+
+
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+
+
+        }
+
+
+
         if(command.equals("q")){
             context="search";
             return;
@@ -115,15 +134,21 @@ public class Main {
                 }
 
                 if(Hasmatch()) {
-                    if (command.toLowerCase().equals("y")) {
+                    if (command.toLowerCase().equals("movie")) {
                         System.out.println("going to " + results[0].Getlink());
                         context="onmatch";
-                        Web.getmatchpage(results[0].Getlink(),driver);
+                        Web.getmatchpage(results[0].Getlink(),driver,"movie");
 
                     }
-                    if (command.toLowerCase().equals("n")) {
-                        context = "results";
+                    if (command.toLowerCase().equals("tv")) {
+                        System.out.println("going to " + results[1].Getlink());
+                        context="onmatch";
+                        Web.getmatchpage(results[1].Getlink(),driver,"tv");
                     }
+
+
+
+
                 }
 
                 ///if its a num open the mag link

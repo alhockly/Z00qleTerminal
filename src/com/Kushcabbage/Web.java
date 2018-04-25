@@ -1,4 +1,4 @@
-package com.example;
+package com.Kushcabbage;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -152,7 +152,7 @@ public class Web {
                 System.out.println(res.toString());
                 count++;
             }
-            result[] resultarray = new result[results.size()+1];
+            result[] resultarray = new result[results.size()+2];        //to start link to a matching movie OR tv
 
             //check for suggested media
 
@@ -171,22 +171,19 @@ public class Web {
                     String type="";
                     if(typebox.toString().contains("tv")){
                         type="tv";
-                        System.out.print("FOUND MATCHING TV SERIES");
+                        System.out.println(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (movie)");
                     }
                     if(typebox.toString().contains("movies")){
-                        type="movies";
-                        System.out.print("FOUND MATCHING MOVIE");
+                        type+="movie";
+                        System.out.println(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING MOVIE (tv)");
                     }
 
-
-                    System.out.println(" Go to? (y/n)");
-
+                    System.out.println(Main.ANSI_RESET);
                     Main.SetMatch(true);
-
                     //bump array and add link to result 0
                     List<WebElement> links = suglist.findElements(By.tagName("a"));
-                    resultarray[0] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","","");
 
+                    resultarray[sugnum] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","",""); resultarray[sugnum] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","","");
                 }
                 sugnum++;
             }
@@ -203,7 +200,7 @@ public class Web {
         Main.context="results";
 
 
-            int i=1;
+            int i=2;                                        //start at 1 and not 0
             for(result res:results){
                 resultarray[i]=res;
                 i++;
@@ -222,36 +219,46 @@ public class Web {
         return String.valueOf(pos);
     }
 
-    public static result[] getmatchpage(String url,WebDriver driver){
+    public static result[] getmatchpage(String url,WebDriver driver,String type){
         driver.get(url);
 
         /////For film
-        try {
-            WebElement table = driver.findElement(By.className("table-torrents"));
-            List<WebElement> allRows = table.findElements(By.tagName("tr"));
-            List<result> results = new ArrayList<>();
-            for (WebElement row : allRows) {
-                //System.out.println(row.getText());
-                if(row.getText().equals("")){continue;}
-                result tmp=TableRowToResult(row);
-                results.add(tmp);
-                try {
-                    System.out.println(tmp.toString());
-                }catch (Exception e){
-                    System.out.println(row.getText().replace("\n",""));
+        if(type.equals("movie")) {
+            try {
+                WebElement table = driver.findElement(By.className("table-torrents"));
+                List<WebElement> allRows = table.findElements(By.tagName("tr"));
+                List<result> results = new ArrayList<>();
+                for (WebElement row : allRows) {
+                    //System.out.println(row.getText());
+                    if (row.getText().equals("")) {
+                        continue;
+                    }
+                    result tmp = TableRowToResult(row);
+                    results.add(tmp);
+                    int tmpsize =results.size();
+                    try {
+                        System.out.println(Main.ANSI_WHITE+tmpsize+". "+tmp.toString());
+                    } catch (Exception e) {
+                        if(!row.getText().contains("+"))
+                        System.out.println(Main.ANSI_CYAN+row.getText().replace("\n", ""));        //just print the line
+                    }
                 }
-            }
 
-        }catch (Exception e){
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        ///for TV??
+        if(type.equals("tv")){
+
         }
 
-        ///for TV??
 
         return new result[2];
     }
 
     public static result TableRowToResult(WebElement row){
+
         List<WebElement> cells = row.findElements(By.tagName("td"));
 
         if(cells.size()==5){    //movies
@@ -318,7 +325,8 @@ public class Web {
             }
 
         }
-        System.out.println("row didn't parse");
+
+        //System.out.println("row didn't parse");
         return null;
     }
 

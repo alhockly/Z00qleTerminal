@@ -1,4 +1,4 @@
-package com.example;
+package com.Kushcabbage;
 
 import java.awt.Desktop;
 import java.io.IOException;
