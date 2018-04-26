@@ -270,6 +270,19 @@ public class Web {
             }
             System.out.println(numseasons+" seasons");
 
+           WebElement seasonlink = driver.findElement(By.linkText("Season 1"));
+           seasonlink.click();
+
+           for(int i=0;i<numseasons;i++){
+               int num=i+1;
+              WebElement season = driver.findElement(By.id("se_"+num));
+              List<WebElement> eps = season.findElements(By.className("list-group-item"));
+              for(WebElement ep:eps) {
+                  String name = ep.findElement(By.tagName("a")).getText();
+                  System.out.println(name);
+              }
+           }
+
 
 
         }
