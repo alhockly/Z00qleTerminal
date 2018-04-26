@@ -163,7 +163,7 @@ public class Main {
                 ///if its a num open the mag link
                 try {
                     int num = Integer.parseInt(command);
-                    results[num].open();
+                    results[num+1].open();
                     context = "search";
                 } catch (Exception e) {
                     //e.printStackTrace();s
@@ -175,33 +175,7 @@ public class Main {
         }
     }
 
-    public static String GetProfileName(String html){
 
-        PrintWriter out = null;
-
-
-        try {
-            out = new PrintWriter("lastfile.html");
-            out.println(html);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-
-        String tags[] = html.split("<");
-        int i=0;
-        for(String tag:tags){
-            if(tag.contains("f89xq")){
-                System.out.println(tags[i]);
-                return tag;
-            }
-
-            i++;
-        }
-
-        return "Uknown";
-    }
 
 
 
