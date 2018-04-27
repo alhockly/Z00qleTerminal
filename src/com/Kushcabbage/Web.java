@@ -183,11 +183,11 @@ public class Web {
                     String type="";
                     if(typebox.toString().contains("tv")){
                         type="tv";
-                        System.out.print(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (movie)"+Main.ANSI_RESET);
+                        System.out.print(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (tv)"+Main.ANSI_RESET);
                     }
                     if(typebox.toString().contains("movies")){
                         type+="movie";
-                        System.out.println(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING MOVIE (tv)");
+                        System.out.println(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING MOVIE (movie)");
                     }
 
                     System.out.println(Main.ANSI_RESET);

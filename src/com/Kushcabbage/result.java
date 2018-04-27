@@ -36,6 +36,7 @@ public class result {
 
         color+=Main.ANSI_PURPLE+fixedLengthString(name,60)+" ";
         color+=Main.ANSI_WHITE+fixedLengthString(size,6)+" ";
+        color+=Main.ANSI_BLUE+sound;
 
         color+=Main.ANSI_CYAN+rightalign(seed,3);
         color+=Main.ANSI_RED+rightalign(leech,3);
