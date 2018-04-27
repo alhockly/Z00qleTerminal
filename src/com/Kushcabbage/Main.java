@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -52,6 +53,7 @@ public class Main {
     static List<String> commands = new ArrayList<>();
 
     public static result[] results;
+
 
     static String baseurl = "https://www.zooqle.com";
 
@@ -147,28 +149,61 @@ public class Main {
                         System.out.println("going to " + results[0].Getlink());
                         context="onmatch";
                         Web.getmatchpage(results[0].Getlink(),driver,"movie");
-
                     }
                     if (command.toLowerCase().equals("tv")) {
                         System.out.println("going to " + results[1].Getlink());
                         context="onmatch";
                         Web.getmatchpage(results[1].Getlink(),driver,"tv");
                     }
-
-
-
-
                 }
 
                 ///if its a num open the mag link
                 try {
                     int num = Integer.parseInt(command);
-                    results[num+1].open();
+                    results[num+1].open();          //check if num in array
                     context = "search";
-                } catch (Exception e) {
-                    //e.printStackTrace();s
+                    return;
+                } catch (NumberFormatException nfe){
 
+                    List<result> filtered = new ArrayList<>();
+
+
+                    for(int i=2;i<results.length;i++){
+                        try {
+                            if (results[i].toString().toLowerCase().contains(command.toLowerCase())) {
+                                filtered.add(results[i]);
+
+                            }
+                        }catch (NullPointerException npe){
+
+                        }
+                    }
+
+
+                    int i=0;
+                    for(result res:filtered){
+                        int num= filtered.indexOf(res)+1;
+                        System.out.println(num+"."+res.toString());
+
+
+                    }
+                    //pass back as results
+                    UpdateResults(filtered);
+
+
+
+
+                    return;
+
+
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+
 
             }
 
@@ -176,7 +211,15 @@ public class Main {
     }
 
 
+    public static void UpdateResults(List<result> newresults){
+        results=new result[newresults.size()+2];
+        int i=2;
+        for(result res:newresults){
+            results[i]=res;
+            i++;
+        }
 
+    }
 
 
     private static boolean checkValid(String command){
