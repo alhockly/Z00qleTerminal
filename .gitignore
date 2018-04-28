@@ -1,0 +1,6 @@
+
+out/artifacts/Z00qleTerminal_jar/Z00qleTerminal.exe
+out/artifacts/Z00qleTerminal_jar/Z00qleTerminal.jar
+*.zip
+*.class
+out/production/Z00qleTerminal/META-INF/MANIFEST.MF
