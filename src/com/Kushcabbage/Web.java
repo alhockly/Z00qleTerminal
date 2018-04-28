@@ -172,32 +172,40 @@ public class Web {
             WebElement suglist = driver.findElement(By.className("suglist"));
             List<WebElement> suglinks = suglist.findElements(By.tagName("li"));
             int sugnum=0;
+            int arrypos=0;
             for(WebElement link: suglinks){
 
 
                 //remove punctuation
                 if(link.getAttribute("title").replaceAll("\\p{P}", "").toLowerCase().equals(term.trim().toLowerCase())){
-
+                    List<WebElement> links = suglist.findElements(By.tagName("a"));
 
                     WebElement typebox = link.findElement(By.className("zqf-small"));
                     String type="";
                     if(typebox.toString().contains("tv")){
                         type="tv";
                         System.out.print(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING TV SERIES (tv)"+Main.ANSI_RESET);
-                    }
-                    if(typebox.toString().contains("movies")){
-                        type+="movie";
-                        System.out.println(Main.ANSI_WHITE_BACKGROUND+Main.ANSI_RED+"FOUND MATCHING MOVIE (movie)");
-                    }
 
+                        resultarray[arrypos] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","",""); resultarray[sugnum] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","","");
+
+                    }
+                    else {
+                        if (typebox.toString().contains("movies")) {
+                            type+= "movie";
+                            System.out.println(Main.ANSI_WHITE_BACKGROUND + Main.ANSI_RED + "FOUND MATCHING MOVIE (movie)");
+                            resultarray[arrypos] = new result(links.get(sugnum).getAttribute("href"), 0, "match", "", "", "", "", "", "");
+
+
+                        }
+                    }
                     System.out.println(Main.ANSI_RESET);
                     Main.SetMatch(true);
-                    //bump array and add link to result 0
-                    List<WebElement> links = suglist.findElements(By.tagName("a"));
 
-                    resultarray[sugnum] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","",""); resultarray[sugnum] = new result(links.get(sugnum).getAttribute("href"),0,"match","","","","","","");
+
+                    arrypos++;
                 }
                 sugnum++;
+
             }
         }catch(Exception e){
             //e.printStackTrace();
@@ -212,7 +220,7 @@ public class Web {
         Main.context="results";
 
 
-            int i=2;                                        //start at 1 and not 0
+            int i=2;                                        //start at 2, [0] and [1] and for MATCHING tv and movie web pages
             for(result res:results){
                 resultarray[i]=res;
                 i++;
@@ -231,7 +239,7 @@ public class Web {
         return String.valueOf(pos);
     }
 
-    public static result[] getmatchpage(String url,WebDriver driver,String type){
+    public static void getmatchpage(String url,WebDriver driver,String type){
         driver.get(url);
 
         /////For film
@@ -246,15 +254,23 @@ public class Web {
                         continue;
                     }
                     result tmp = TableRowToResult(row);
-                    results.add(tmp);
-                    int tmpsize =results.size();
-                    try {
-                        System.out.println(Main.ANSI_WHITE+tmpsize+". "+tmp.toString());
-                    } catch (Exception e) {
-                        if(!row.getText().contains("+"))
-                        System.out.println(Main.ANSI_CYAN+row.getText().replace("\n", ""));        //just print the line
+                    if(tmp==null){}
+                    else {
+                        results.add(tmp);
                     }
+
+
+                    if(tmp!=null){}
+                    else{
+                        if(!row.getText().contains("+"))
+                            System.out.println(Main.ANSI_CYAN+row.getText().replace("\n", ""));        //just print the line
+                    }
+
+
+
+
                 }
+                Main.UpdateResults(results);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -288,14 +304,26 @@ public class Web {
         }
 
 
-        return new result[2];
+
     }
 
     public static result TableRowToResult(WebElement row){
 
         List<WebElement> cells = row.findElements(By.tagName("td"));
 
+
         if(cells.size()==5){    //movies
+            String maglink="";
+
+
+
+            List<WebElement>links= row.findElements(By.cssSelector("li a"));
+            for(WebElement link:links){
+                if(link.getAttribute("href").contains("magnet:?")){
+                    maglink=link.getAttribute("href");
+                }
+            }
+
             String zero = cells.get(0).getText();
             String name = cells.get(1).getText();
             String sound="";
@@ -311,7 +339,7 @@ public class Web {
             String[] seedleech = cells.get(4).getText().split("\n");
             String seed=seedleech[0];
             String leech = seedleech[1];
-            return new result("",0, name, sound, "", size, age, seed, leech);
+            return new result(maglink,0, name, sound, "", size, age, seed, leech);
 
         }
 
@@ -321,12 +349,12 @@ public class Web {
             String one = cells.get(1).getText();
             String two = cells.get(2).getText();
             String three= cells.get(3).getText();
-            List<WebElement>links= row.findElements(By.tagName("a"));
+
             String maglink="";
             for(WebElement cell: cells){
                 System.out.println(cell.getText().replace("\n",""));
             }
-
+            List<WebElement>links= row.findElements(By.tagName("a"));
             for(WebElement link:links){
                 if(link.getAttribute("href").contains("magnet:?")){
                     maglink=link.getAttribute("href");

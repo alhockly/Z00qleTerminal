@@ -114,7 +114,7 @@ public class Main {
 
 
             } catch (Exception e) {
-                //e.printStackTrace();
+                e.printStackTrace();
             }
 
 
@@ -149,11 +149,13 @@ public class Main {
                         System.out.println("going to " + results[0].Getlink());
                         context="onmatch";
                         Web.getmatchpage(results[0].Getlink(),driver,"movie");
+                        return;
                     }
                     if (command.toLowerCase().equals("tv")) {
                         System.out.println("going to " + results[1].Getlink());
                         context="onmatch";
                         Web.getmatchpage(results[1].Getlink(),driver,"tv");
+                        return;
                     }
                 }
 
